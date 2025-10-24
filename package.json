@@ -1,0 +1,30 @@
+{
+  "name": "nostria-dashboard",
+  "version": "1.0.0",
+  "description": "Investor dashboard for Nostria project with NIP-98 and SEP-0010 authentication",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "nostria",
+    "investor",
+    "dashboard",
+    "nostr",
+    "stellar",
+    "rbf"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "dotenv": "^16.4.5",
+    "nostr-tools": "^2.10.2",
+    "@stellar/stellar-sdk": "^13.0.0",
+    "better-sqlite3": "^11.7.0",
+    "uuid": "^11.0.3"
+  }
+}

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nostria Investor Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        .auth-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .stat-card .value {
+            color: #333;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .stat-card .currency {
+            color: #667eea;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            color: #666;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            color: #333;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-pending {
+            background: #fed7aa;
+            color: #92400e;
+        }
+
+        .status-failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .profile-field {
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .profile-field label {
+            display: block;
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .profile-field .value {
+            color: #333;
+            font-size: 16px;
+            word-break: break-all;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .auth-description {
+            margin: 15px 0;
+            color: #666;
+        }
+
+        #authError {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #authLoading {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nostria Investor Dashboard</h1>
+            <p>Revenue Based Financing - Track your investment and payouts</p>
+        </div>
+
+        <!-- Authentication Section -->
+        <div id="authSection" class="auth-section">
+            <h2>Login to Your Account</h2>
+            <p class="auth-description">Choose your preferred authentication method</p>
+            <div class="auth-buttons">
+                <button class="btn btn-primary" onclick="loginWithNostr()">Login with Nostr</button>
+                <button class="btn btn-primary" onclick="loginWithStellar()">Login with Stellar</button>
+            </div>
+            <div id="authError" class="error"></div>
+            <div id="authLoading" class="loading">Authenticating...</div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboardSection" class="dashboard">
+            <!-- Profile Section -->
+            <div class="section">
+                <h2>Your Profile</h2>
+                <div id="profileInfo" class="profile-info"></div>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid" id="statsGrid"></div>
+
+            <!-- Recent Payouts -->
+            <div class="section">
+                <h2>Recent Payouts</h2>
+                <div id="recentPayouts"></div>
+            </div>
+
+            <!-- Revenue History -->
+            <div class="section">
+                <h2>Revenue History</h2>
+                <div id="revenueHistory"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Check authentication status on load
+        window.addEventListener('load', async () => {
+            await checkAuthStatus();
+        });
+
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch('/auth/status');
+                const data = await response.json();
+
+                if (data.authenticated) {
+                    showDashboard();
+                    await loadDashboardData();
+                } else {
+                    showAuth();
+                }
+            } catch (error) {
+                console.error('Error checking auth status:', error);
+                showAuth();
+            }
+        }
+
+        function showAuth() {
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('dashboardSection').classList.remove('active');
+            document.getElementById('authLoading').style.display = 'none';
+        }
+
+        function showDashboard() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('dashboardSection').classList.add('active');
+        }
+
+        function showAuthLoading(show = true) {
+            document.getElementById('authLoading').style.display = show ? 'block' : 'none';
+            document.getElementById('authError').style.display = 'none';
+        }
+
+        async function loginWithNostr() {
+            try {
+                showAuthLoading(true);
+                hideAuthError();
+
+                // Check if window.nostr is available (browser extension)
+                if (!window.nostr) {
+                    showAuthError('Please install a Nostr browser extension like nos2x, Alby, or Flamingo to login.');
+                    showAuthLoading(false);
+                    return;
+                }
+
+                console.log('Getting public key from Nostr extension...');
+                
+                // Get public key from extension
+                const pubkey = await window.nostr.getPublicKey();
+                console.log('Public key:', pubkey);
+                
+                // Create NIP-98 auth event
+                const url = window.location.origin + '/auth/nostr/login';
+                const method = 'POST';
+                const createdAt = Math.floor(Date.now() / 1000);
+
+                console.log('Creating event with URL:', url);
+
+                // Build the event
+                const event = {
+                    kind: 27235, // NIP-98 HTTP Auth
+                    created_at: createdAt,
+                    tags: [
+                        ['u', url],
+                        ['method', method]
+                    ],
+                    content: '',
+                    pubkey: pubkey
+                };
+
+                console.log('Event to sign:', event);
+
+                // Sign the event using the browser extension
+                const signedEvent = await window.nostr.signEvent(event);
+                console.log('Signed event:', signedEvent);
+
+                // Send to server
+                console.log('Sending POST to /auth/nostr/login...');
+                const response = await fetch('/auth/nostr/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ event: signedEvent })
+                });
+
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (response.ok && data.success) {
+                    showDashboard();
+                    await loadDashboardData();
+                } else {
+                    showAuthError(data.error || 'Authentication failed');
+                }
+            } catch (error) {
+                console.error('Nostr login error:', error);
+                showAuthError(error.message || 'Failed to authenticate with Nostr');
+            } finally {
+                showAuthLoading(false);
+            }
+        }
+
+        async function loginWithStellar() {
+            showAuthError('Stellar login requires SEP-0010 challenge/response flow. This is a demonstration - implement full flow in production.');
+        }
+
+        async function logout() {
+            try {
+                await fetch('/auth/logout', { method: 'POST' });
+                showAuth();
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+
+        function showAuthError(message) {
+            const errorDiv = document.getElementById('authError');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 8000);
+        }
+
+        function hideAuthError() {
+            const errorDiv = document.getElementById('authError');
+            errorDiv.style.display = 'none';
+        }
+
+        // Expose functions to global scope for onclick handlers
+        window.loginWithNostr = loginWithNostr;
+        window.loginWithStellar = loginWithStellar;
+        window.logout = logout;
+
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/investor/dashboard');
+                const data = await response.json();
+
+                renderProfile(data.investor);
+                renderStats(data.stats);
+                renderRecentPayouts(data.recent_payouts);
+                renderRevenueHistory(data.recent_revenues);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function renderProfile(investor) {
+            const profileDiv = document.getElementById('profileInfo');
+            profileDiv.innerHTML = `
+                <div class="profile-field">
+                    <label>Name</label>
+                    <div class="value">${investor.name || 'N/A'}</div>
+                </div>
+                <div class="profile-field">
+                    <label>Investment Amount</label>
+                    <div class="value">$${formatNumber(investor.investment_amount)}</div>
+                </div>
+                <div class="profile-field">
+                    <label>Investment Date</label>
+                    <div class="value">${formatDate(investor.investment_date)}</div>
+                </div>
+                <div class="profile-field">
+                    <label>Ownership Share</label>
+                    <div class="value">${investor.share_percentage}%</div>
+                </div>
+            `;
+        }
+
+        function renderStats(stats) {
+            const statsDiv = document.getElementById('statsGrid');
+            statsDiv.innerHTML = `
+                <div class="stat-card">
+                    <h3>Total Investment Pool</h3>
+                    <div class="value currency">$${formatNumber(stats.total_investment_pool)}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Received</h3>
+                    <div class="value currency">$${formatNumber(stats.total_payouts_received)}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Expected Monthly</h3>
+                    <div class="value currency">$${formatNumber(stats.expected_monthly_payout)}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Payouts</h3>
+                    <div class="value">${stats.total_payouts_count}</div>
+                </div>
+            `;
+        }
+
+        function renderRecentPayouts(payouts) {
+            const payoutsDiv = document.getElementById('recentPayouts');
+            
+            if (!payouts || payouts.length === 0) {
+                payoutsDiv.innerHTML = '<div class="no-data">No payout history yet</div>';
+                return;
+            }
+
+            payoutsDiv.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th>Amount</th>
+                            <th>Share %</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${payouts.map(payout => `
+                            <tr>
+                                <td>${payout.month}/${payout.year}</td>
+                                <td>$${formatNumber(payout.payout_amount)}</td>
+                                <td>${payout.payout_percentage.toFixed(4)}%</td>
+                                <td>${formatDate(payout.payout_date)}</td>
+                                <td><span class="status-badge status-${payout.status}">${payout.status}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function renderRevenueHistory(revenues) {
+            const revenueDiv = document.getElementById('revenueHistory');
+            
+            if (!revenues || revenues.length === 0) {
+                revenueDiv.innerHTML = '<div class="no-data">No revenue history yet</div>';
+                return;
+            }
+
+            revenueDiv.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th>Total Revenue</th>
+                            <th>Investor Share</th>
+                            <th>Total Payout</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${revenues.map(revenue => `
+                            <tr>
+                                <td>${revenue.month}/${revenue.year}</td>
+                                <td>$${formatNumber(revenue.total_revenue)}</td>
+                                <td>${revenue.investor_share_percentage}%</td>
+                                <td>$${formatNumber(revenue.total_investor_payout)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(num);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+    </script>
+</body>
+</html>
