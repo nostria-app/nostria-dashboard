@@ -10,7 +10,7 @@ const router = express.Router();
  * GET /api/investor/profile
  * Get current investor's profile
  */
-router.get('/profile', requireAuth, (req, res) => {
+router.get('/investor/profile', requireAuth, (req, res) => {
   try {
     const investor = req.investor;
 
@@ -33,7 +33,7 @@ router.get('/profile', requireAuth, (req, res) => {
  * GET /api/investor/dashboard
  * Get investor's dashboard data including investment stats and recent payouts
  */
-router.get('/dashboard', requireAuth, (req, res) => {
+router.get('/investor/dashboard', requireAuth, (req, res) => {
   try {
     const investor = req.investor;
     const allInvestors = investorModel.getAll();
@@ -87,7 +87,7 @@ router.get('/dashboard', requireAuth, (req, res) => {
  * GET /api/investor/payouts
  * Get investor's complete payout history
  */
-router.get('/payouts', requireAuth, (req, res) => {
+router.get('/investor/payouts', requireAuth, (req, res) => {
   try {
     const investor = req.investor;
     const payouts = payoutModel.getByInvestorId(investor.id);
